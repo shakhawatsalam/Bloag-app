@@ -44,11 +44,11 @@ export const Mutation = {
         },
       });
     }
-    const token = await jwtHelper(
+    const token = await jwtHelper.generateToken(
       {
         userId: newUser.id,
       },
-      config.jwt.secret as Secret
+      config.jwt.secret as string
     );
     return {
       userError: null,
@@ -76,15 +76,42 @@ export const Mutation = {
         userError: "Your Password is Incorrect",
       };
     }
-    const token = await jwtHelper(
+    const token = await jwtHelper.generateToken(
       {
         userId: user.id,
       },
-      config.jwt.secret as Secret
+      config.jwt.secret as string
     );
     return {
       userError: null,
       token,
+    };
+  },
+  addPost: async (parent: any, args: any, { prisma, userInfo }: any) => {
+    if (!userInfo) {
+      return {
+        userError: "Unauthorize",
+        post: null,
+      };
+    }
+
+    if (!args.title || !args.content) {
+      return {
+        userError: "Title and Content is required!",
+        post: null,
+      };
+    }
+
+    const newPost = await prisma.post.create({
+      data: {
+        ...args,
+        authorId: userInfo.userId,
+      },
+    });
+
+    return {
+      userError: null,
+      post: newPost,
     };
   },
 };
