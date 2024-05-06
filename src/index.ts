@@ -5,10 +5,11 @@ import { resolvers } from "./resolvers";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 import { jwtHelper } from "./utils/jwtHelper";
+
 // * ---------- Imports ------------ // *
 
 // * Prisma
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 // * Interfaces
 interface Context {
@@ -29,7 +30,7 @@ const main = async () => {
       const userInfo = await jwtHelper.getUserInfoFromToken(
         req.headers.authorization as string
       );
-      
+
       return {
         prisma,
         userInfo,
